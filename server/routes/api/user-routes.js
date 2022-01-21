@@ -2,7 +2,6 @@ const router = require("express").Router();
 const {
   createUser,
   getSingleUser,
-  getSingleUser2,
   saveBook,
   deleteBook,
   login,
@@ -15,7 +14,7 @@ const { authMiddleware } = require("../../utils/auth");
 router.route("/").post(createUser).put(authMiddleware, saveBook);
 
 router.route("/login").post(login);
-router.route("/user").get(getSingleUser2);
+
 router.route("/me").get(authMiddleware, getSingleUser);
 
 router.route("/books/:bookId").delete(authMiddleware, deleteBook);

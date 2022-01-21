@@ -4,17 +4,6 @@ const { User } = require('../models');
 const { signToken } = require('../utils/auth');
 
 module.exports = {
-  async getSingleUser2({ user = null, params }, res) {
-    const foundUser2 = await User.findOne({
-      $or: [{ _id: user ? user._id : params.id }, { username: params.username }],
-    });
-
-    if (!foundUser2) {
-      return res.status(400).json({ message: 'Cannot find a user with this id!' });
-    }
-
-    res.json(foundUser2);
-  },
   // get a single user by either their id or their username
   async getSingleUser({ user = null, params }, res) {
     const foundUser = await User.findOne({
