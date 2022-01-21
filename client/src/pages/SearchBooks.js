@@ -6,6 +6,7 @@ import { saveBook, searchGoogleBooks } from '../utils/API';
 import { saveBookIds, getSavedBookIds } from '../utils/localStorage';
 
 const SearchBooks = () => {
+  
   // create state for holding returned google api data
   const [searchedBooks, setSearchedBooks] = useState([]);
   // create state for holding our search field data
@@ -19,6 +20,13 @@ const SearchBooks = () => {
   useEffect(() => {
     return () => saveBookIds(savedBookIds);
   });
+
+  // testing
+  const loggedIn = Auth.loggedIn();
+
+  const preToken = Auth.getToken();
+  console.log('=====TOKEN===== being logged on searchBooks.js load');
+    console.log(preToken);
 
   // create method to search for books and set state on form submit
   const handleFormSubmit = async (event) => {
@@ -59,8 +67,11 @@ const SearchBooks = () => {
 
     // get token
     const token = Auth.loggedIn() ? Auth.getToken() : null;
-
+    console.log('=====TOKEN===== being logged from handleSaveBook btn searchBooks.js');
+    console.log(token);
     if (!token) {
+      console.log('=====TOKEN===== being logged from inside !token if');
+      console.log(token);
       return false;
     }
 
@@ -83,6 +94,11 @@ const SearchBooks = () => {
       <Jumbotron fluid className='text-light bg-dark'>
         <Container>
           <h1>Search for Books!</h1>
+              {loggedIn ? (
+                <div>user is loggedin - delete me form searchBooks.js for prod</div>
+              ) : (
+                <div>Not loggedin</div>
+              )}
           <Form onSubmit={handleFormSubmit}>
             <Form.Row>
               <Col xs={12} md={8}>
