@@ -1,42 +1,57 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Jumbotron, Container, CardColumns, Card, Button } from 'react-bootstrap';
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { QUERY_ME } from "../utils/queries";
-
-import { getMe, deleteBook } from '../utils/API';
+import { REMOVE_BOOK } from "../utils/mutations";
+// import { getMe, deleteBook } from '../utils/API';
 import Auth from '../utils/auth';
 import { removeBookId } from '../utils/localStorage';
 
 const SavedBooks = () => {
+  
   const [userData, setUserData] = useState({});
-  //const { loading, data } = useQuery(QUERY_ME);
-  // use this to determine if `useEffect()` hook needs to run again
+  // retrieve me/my data
+  // Instead, use the useQuery() Hook to execute the GET_ME query on load and save it to a variable named userData.
+  const { data } = useQuery(QUERY_ME,
+    {onCompleted: () => {
+      setUserData(data.me)
+      console.log(data.me);
+    }});
+
+    //const userDataLength = data?.me.savedBooks || false;  
+
   const userDataLength = Object.keys(userData).length;
+  const [removeBook, {error}] = useMutation(REMOVE_BOOK);
 
-  useEffect(() => {
-    const getUserData = async () => {
-      try {
-        const token = Auth.loggedIn() ? Auth.getToken() : null;
+  // const loggedIn = Auth.loggedIn();
+  
+  // Remove the useEffect() Hook that sets the state for UserData.
+  // useEffect(() => {
+  //   const getUserData = async () => {
+  //     try {
+  //       const token = Auth.loggedIn() ? Auth.getToken() : null;
+  //       console.log('=====TOKEN===== being logged on savedBooks.js load');
+  //       console.log(token);
 
-        if (!token) {
-          return false;
-        }
+  //       if (!token) {
+  //         return false;
+  //       }
 
-        const response = await getMe(token);
+  //       const response = await getMe(token);
 
-        if (!response.ok) {
-          throw new Error('something went wrong!');
-        }
+  //       if (!response.ok) {
+  //         throw new Error('something went wrong!');
+  //       }
 
-        const user = await response.json();
-        setUserData(user);
-      } catch (err) {
-        console.error(err);
-      }
-    };
+  //       const user = await response.json();
+  //       setUserData(user);
+  //     } catch (err) {
+  //       console.error(err);
+  //     }
+  //   };
 
-    getUserData();
-  }, [userDataLength]);
+  //   getUserData();
+  // }, [userDataLength]);
 
   // create function that accepts the book's mongo _id value as param and deletes the book from the database
   const handleDeleteBook = async (bookId) => {
@@ -47,14 +62,15 @@ const SavedBooks = () => {
     }
 
     try {
-      const response = await deleteBook(bookId, token);
-
-      if (!response.ok) {
+      const response = await removeBook({
+        variables: { bookId: bookId }
+      });
+      console.log(bookId)
+      if (error) {
         throw new Error('something went wrong!');
       }
 
-      const updatedUser = await response.json();
-      setUserData(updatedUser);
+      setUserData(response.data.removeBook);
       // upon success, remove book's id from localStorage
       removeBookId(bookId);
     } catch (err) {
@@ -63,7 +79,7 @@ const SavedBooks = () => {
   };
 
   // if data isn't here yet, say so
-  if (!userDataLength) {
+  if (userDataLength === 0) {
     return <h2>LOADING...</h2>;
   }
 
