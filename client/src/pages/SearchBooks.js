@@ -21,9 +21,19 @@ const SearchBooks = () => {
   const [searchedBooks, setSearchedBooks] = useState([]);
   // create state for holding our search field data
   const [searchInput, setSearchInput] = useState("");
-
   // create state to hold saved bookId values
   const [savedBookIds, setSavedBookIds] = useState(getSavedBookIds());
+
+  // set up useEffect hook to save `savedBookIds` list to localStorage on component unmount
+  // learn more here: https://reactjs.org/docs/hooks-effect.html#effects-with-cleanup
+  useEffect(() => {
+    return () => saveBookIds(savedBookIds);
+  });
+
+  // testing
+  console.log("=====LOGGED IN?=====");
+  const loggedIn = Auth.loggedIn();
+  console.log(loggedIn);
 
   const [saveBook, { error }] = useMutation(SAVE_BOOK, {
     update(cache, { data: { saveBook } }) {
@@ -40,17 +50,6 @@ const SearchBooks = () => {
       }
     },
   });
-  // set up useEffect hook to save `savedBookIds` list to localStorage on component unmount
-  // learn more here: https://reactjs.org/docs/hooks-effect.html#effects-with-cleanup
-  useEffect(() => {
-    return () => saveBookIds(savedBookIds);
-  });
-
-  // testing
-  const loggedIn = Auth.loggedIn();
-  const preToken = Auth.getToken();
-  console.log("=====TOKEN===== being logged on searchBooks.js load");
-  console.log(preToken);
 
   // create method to search for books and set state on form submit
   const handleFormSubmit = async (event) => {
@@ -84,6 +83,7 @@ const SearchBooks = () => {
     }
   };
 
+  //const [saveBook, { error }] = useMutation(SAVE_BOOK);
   // create function to handle saving a book to our database
   const handleSaveBook = async (bookId) => {
     // find the book in `searchedBooks` state by the matching id
@@ -91,16 +91,8 @@ const SearchBooks = () => {
 
     // get token
     const token = Auth.loggedIn() ? Auth.getToken() : null;
-    console.log(
-      "=====TOKEN===== being logged from handleSaveBook btn searchBooks.js"
-    );
-    console.log(token);
-    console.log("=====book to save======");
-    console.log(bookToSave.bookId);
 
     if (!token) {
-      console.log("=====TOKEN===== being logged from inside !token if");
-      console.log(token);
       return false;
     }
 
@@ -109,9 +101,8 @@ const SearchBooks = () => {
         variables: { input: bookToSave },
       });
       setSavedBookIds([...savedBookIds, bookToSave.bookId]);
-    } catch (e) {
-      console.log("you must be logged in");
-      console.error(e);
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -120,11 +111,6 @@ const SearchBooks = () => {
       <Jumbotron fluid className="text-light bg-dark">
         <Container>
           <h1>Search for Books!</h1>
-          {loggedIn ? (
-            <div>user is loggedin - delete me form searchBooks.js for prod</div>
-          ) : (
-            <div>user is Not loggedin</div>
-          )}
           <Form onSubmit={handleFormSubmit}>
             <Form.Row>
               <Col xs={12} md={8}>
