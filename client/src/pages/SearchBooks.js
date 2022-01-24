@@ -41,6 +41,7 @@ const SearchBooks = () => {
         // update me object's cache
         // could potentially not exist yet, so wrap in a try/catch
         const { me } = cache.readQuery({ query: QUERY_ME });
+        // prepend newest added book to savedBooks array
         cache.writeQuery({
           query: QUERY_ME,
           data: { me: { ...me, savedBooks: [...me.savedBooks, saveBook] } },
@@ -75,6 +76,8 @@ const SearchBooks = () => {
         description: book.volumeInfo.description,
         image: book.volumeInfo.imageLinks?.thumbnail || "",
       }));
+
+      console.log(bookData);
 
       setSearchedBooks(bookData);
       setSearchInput("");

@@ -13,7 +13,7 @@ const typeDefs = gql`
 
   type Book {
     bookId: ID!
-    title: String
+    title: String!
     authors: [String]
     description: String
     image: String
@@ -49,10 +49,3 @@ const typeDefs = gql`
 `;
 
 module.exports = typeDefs;
-// login(email: String!, password: String!): User
-
-// const typeDefs = gql`
-//   type Query {
-//     helloWorld: String
-//   }
-// `;
