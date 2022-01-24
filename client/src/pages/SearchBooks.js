@@ -77,6 +77,8 @@ const SearchBooks = () => {
         image: book.volumeInfo.imageLinks?.thumbnail || "",
       }));
 
+      console.log(bookData);
+
       setSearchedBooks(bookData);
       setSearchInput("");
     } catch (err) {
