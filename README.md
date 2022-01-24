@@ -1,6 +1,6 @@
 # Google Book Search ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
-![Screenshot of the budget tracker application](public/images/gbs-screenshot.jpg)
+![Screenshot of the budget tracker application](client/public/images/gbs-screenshot.jpg)
 
 ### Deployed Link
 
